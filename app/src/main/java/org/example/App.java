@@ -50,44 +50,6 @@ public class App {
       BigQueryCatalog catalog, ZetaSQLToolkitAnalyzer analyzer) {
     String query =
         """
-CREATE TEMP FUNCTION TopN(arr ANY TYPE,
-    n INT64) AS ( ARRAY(
-    SELECT
-      x
-    FROM
-      UNNEST(ARRAY(
-        SELECT
-          x
-        FROM
-          UNNEST(arr) AS x
-        ORDER BY
-          x DESC)) AS x
-    WITH
-    OFFSET
-      off
-    WHERE
-      off < n
-    ORDER BY
-      off) );
-CREATE TEMP FUNCTION TopNN(arr ANY TYPE,
-    n INT64) AS ( ARRAY(
-    SELECT
-      x
-    FROM
-      UNNEST(ARRAY(
-        SELECT
-          x
-        FROM
-          UNNEST(arr) AS x
-        ORDER BY
-          x DESC)) AS x
-    WITH
-    OFFSET
-      off
-    WHERE
-      off < n
-    ORDER BY
-      off) );
 CREATE temp TABLE
   gb_avg AS
 WITH
