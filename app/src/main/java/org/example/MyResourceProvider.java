@@ -24,7 +24,7 @@ public class MyResourceProvider implements BigQueryResourceProvider {
 
         );
         SimpleTable table = new SimpleTable(tableName, columns);
-        table.setFullName("default.samples.wikipedia");
+        table.setFullName("default.samples.csp_data");
         return List.of(table);
     }
 
