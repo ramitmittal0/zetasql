@@ -26,6 +26,8 @@ public class MyResourceProvider implements BigQueryResourceProvider {
 
     @Override
     public List<SimpleTable> getAllTablesInDataset(String projectId, String datasetName) {
+        System.out.println("Called here !!!!");
+        System.out.println(datasetName);
         return this.getTables(projectId, null);
     }
 
