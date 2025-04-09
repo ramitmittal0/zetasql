@@ -73,7 +73,7 @@ public class App {
             + "    )\n"
             + "GROUP BY 1;";
 
-    Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query);
+    Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
     ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
     ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
         (ResolvedCreateTableAsSelectStmt) statement;
