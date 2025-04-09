@@ -73,11 +73,11 @@ create or replace temporary table apex_agg as (
   )            """;
 
 
-  Set<String> tables =
-  Analyzer.extractTableNamesFromScript(query, options).stream()
-      .map(tablePath -> String.join(".", tablePath))
-      .collect(Collectors.toSet());
-  System.out.println(tables);
+  // Set<String> tables =
+  // Analyzer.extractTableNamesFromScript(query, options).stream()
+  //     .map(tablePath -> String.join(".", tablePath))
+  //     .collect(Collectors.toSet());
+  // System.out.println(tables);
 
     ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
