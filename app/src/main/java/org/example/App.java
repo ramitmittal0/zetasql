@@ -50,8 +50,67 @@ public class App {
       BigQueryCatalog catalog, ZetaSQLToolkitAnalyzer analyzer) {
     String query =
         """
-            CREATE TEMP TABLE t AS
-            SELECT rec.a1 AS v2 FROM `default`.samples.wikipedia;
+CREATE TEMP FUNCTION TopN(arr ANY TYPE,
+    n INT64) AS ( ARRAY(
+    SELECT
+      x
+    FROM
+      UNNEST(ARRAY(
+        SELECT
+          x
+        FROM
+          UNNEST(arr) AS x
+        ORDER BY
+          x DESC)) AS x
+    WITH
+    OFFSET
+      off
+    WHERE
+      off < n
+    ORDER BY
+      off) );
+CREATE TEMP FUNCTION TopNN(arr ANY TYPE,
+    n INT64) AS ( ARRAY(
+    SELECT
+      x
+    FROM
+      UNNEST(ARRAY(
+        SELECT
+          x
+        FROM
+          UNNEST(arr) AS x
+        ORDER BY
+          x DESC)) AS x
+    WITH
+    OFFSET
+      off
+    WHERE
+      off < n
+    ORDER BY
+      off) );
+CREATE temp TABLE
+  gb_avg AS
+WITH
+  base AS (
+  SELECT
+    * except(used),
+    ARRAY_AGG(used) OVER (PARTITION BY xdr_id ORDER BY UNIX_DATE(date) RANGE BETWEEN 6 PRECEDING
+      AND CURRENT ROW ) gb_list
+  FROM
+    `default.sample.wikipedia` where Unit_Of_Measure = '# GB')
+SELECT
+DATE,
+xdr_id,
+  ROUND(AVG(list_1),2) used,
+FROM (
+  SELECT
+    *,
+    TopNN(gb_list,
+      4) AS gb_list_result
+  FROM
+    base),
+  UNNEST(gb_list_result) list_1
+GROUP BY 1, 2
             """;
 
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);

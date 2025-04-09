@@ -17,14 +17,10 @@ public class MyResourceProvider implements BigQueryResourceProvider {
     public List<SimpleTable> getTables(String projectId, List<String> tableReferences) {
         var tableName = "wikipedia";
         List<SimpleColumn> columns = List.of(
-            new SimpleColumn(tableName, "rec", TypeFactory.createStructType(
-                List.of(
-                    new StructField("a1", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
-                    new StructField("b1", TypeFactory.createStructType(
-                        List.of(new StructField("b2", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)))
-                    ))
-                )
-            ))
+            new SimpleColumn(tableName, "Unit_Of_Measure", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
+            new SimpleColumn(tableName, "date", TypeFactory.createSimpleType(TypeKind.TYPE_DATE)),
+            new SimpleColumn(tableName, "xdr_id", TypeFactory.createSimpleType(TypeKind.TYPE_INT64))
+
         );
         SimpleTable table = new SimpleTable(tableName, columns);
         table.setFullName("default.samples.wikipedia");
