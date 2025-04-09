@@ -53,7 +53,7 @@ public class App {
   private static void lineageForCreateTableAsSelectStatement(
       BigQueryCatalog catalog, ZetaSQLToolkitAnalyzer analyzer) {
     String query =
-        "CREATE TABLE `project.dataset.table` AS\n"
+        "CREATE TEMP TABLE t AS\n"
             + "SELECT\n"
             + "    concatted AS column_alias\n"
             + "FROM\n"
