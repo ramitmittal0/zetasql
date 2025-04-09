@@ -50,68 +50,23 @@ public class App {
       BigQueryCatalog catalog, ZetaSQLToolkitAnalyzer analyzer) {
     String query =
         """
-CREATE TEMP FUNCTION TopN(arr ANY TYPE,
-    n INT64) AS ( ARRAY(
-    SELECT
-      x
-    FROM
-      UNNEST(ARRAY(
-        SELECT
-          x
-        FROM
-          UNNEST(arr) AS x
-        ORDER BY
-          x DESC)) AS x
-    WITH
-    OFFSET
-      off
-    WHERE
-      off < n
-    ORDER BY
-      off) );
-CREATE TEMP FUNCTION TopNN(arr ANY TYPE,
-    n INT64) AS ( ARRAY(
-    SELECT
-      x
-    FROM
-      UNNEST(ARRAY(
-        SELECT
-          x
-        FROM
-          UNNEST(arr) AS x
-        ORDER BY
-          x DESC)) AS x
-    WITH
-    OFFSET
-      off
-    WHERE
-      off < n
-    ORDER BY
-      off) );
-CREATE temp TABLE
-  gb_avg AS
-WITH
-  base AS (
-  SELECT
-    * except(used),
-    ARRAY_AGG(used) OVER (PARTITION BY xdr_id ORDER BY UNIX_DATE(date) RANGE BETWEEN 6 PRECEDING
-      AND CURRENT ROW ) gb_list
-  FROM
-    `default.samples.wikipedia` where Unit_Of_Measure = '# GB')
-SELECT
-DATE,
-xdr_id,
-  ROUND(AVG(list_1),2) used,
-FROM (
-  SELECT
-    *,
-    TopNN(gb_list,
-      4) AS gb_list_result
-  FROM
-    base),
-  UNNEST(gb_list_result) list_1
-GROUP BY 1, 2
-            """;
+create or replace temporary table apex_agg as (
+        select * except(apex_is_Partner),
+            case 
+                  when (apex_is_Partner like '%Mixed%' or apex_is_Partner like '%Partner%PANW%' or apex_is_Partner like '%PANW%Partner%') then 'Mixed' 
+                  when apex_is_Partner = 'Partner' then 'Partner'
+                  else 'PANW'
+                end as apex_is_Partner
+            from (
+                  select 
+                  apexid,
+                  string_agg(distinct csp_visitor,';') apex_visitor,
+                  string_agg(distinct csp_all_users,';') apex_all_users,
+                  string_agg(distinct csp_is_Partner,';') apex_is_Partner, 
+                  from `default.samples.wikipedia` 
+                  group by 1
+            )
+  )            """;
 
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
     ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
