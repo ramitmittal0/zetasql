@@ -51,7 +51,7 @@ public class App {
     String query =
         """
             CREATE TEMP TABLE t AS
-            SELECT rec FROM `default`.samples.wikipedia;
+            SELECT rec.a1 AS v2 FROM `default`.samples.wikipedia;
             """;
 
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
