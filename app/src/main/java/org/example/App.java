@@ -59,7 +59,7 @@ WITH
     ARRAY_AGG(used) OVER (PARTITION BY xdr_id ORDER BY UNIX_DATE(date) RANGE BETWEEN 6 PRECEDING
       AND CURRENT ROW ) gb_list
   FROM
-    `default.sample.wikipedia` where Unit_Of_Measure = '# GB')
+    `default.samples.wikipedia` where Unit_Of_Measure = '# GB')
 SELECT
 DATE,
 xdr_id,
