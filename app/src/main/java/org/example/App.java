@@ -16,7 +16,10 @@
 
 package org.example;
 
+import com.google.zetasql.Analyzer;
 import com.google.zetasql.AnalyzerOptions;
+import com.google.zetasql.LanguageOptions;
+import com.google.zetasql.ZetaSQLOptions;
 import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedCreateTableAsSelectStmt;
 import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedStatement;
 import com.google.zetasql.toolkit.AnalyzedStatement;
@@ -28,6 +31,7 @@ import com.google.zetasql.toolkit.tools.lineage.ColumnLineage;
 import com.google.zetasql.toolkit.tools.lineage.ColumnLineageExtractor;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class App {
 
@@ -47,7 +51,7 @@ public class App {
   }
 
   private static void lineageForCreateTableAsSelectStatement(
-      BigQueryCatalog catalog, ZetaSQLToolkitAnalyzer analyzer) {
+      BigQueryCatalog catalog, AnalyzerOptions options) {
     String query =
         """
 create or replace temporary table apex_agg as (
@@ -68,6 +72,14 @@ create or replace temporary table apex_agg as (
             )
   )            """;
 
+
+  Set<String> tables =
+  Analyzer.extractTableNamesFromScript(query, options).stream()
+      .map(tablePath -> String.join(".", tablePath))
+      .collect(Collectors.toSet());
+  System.out.println(tables);
+
+    ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
     ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
     ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
@@ -152,12 +164,13 @@ create or replace temporary table apex_agg as (
   public static void main(String[] args) {
     BigQueryCatalog catalog = new BigQueryCatalog("default", new MyResourceProvider());
     catalog.addAllTablesInProject("default");
+
+    LanguageOptions languageOptions = new LanguageOptions().enableMaximumLanguageFeatures();
+    languageOptions.setSupportsAllStatementKinds();
     AnalyzerOptions options = new AnalyzerOptions();
-    options.setLanguageOptions(BigQueryLanguageOptions.get());
+    options.setLanguageOptions(languageOptions);
 
-    ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
-
-    lineageForCreateTableAsSelectStatement(catalog, analyzer);
+    lineageForCreateTableAsSelectStatement(catalog, options);
     // System.out.println("-----------------------------------");
     // lineageForInsertStatement(catalog, analyzer);
     // System.out.println("-----------------------------------");

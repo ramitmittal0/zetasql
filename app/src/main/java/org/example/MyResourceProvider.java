@@ -5,7 +5,6 @@ import java.util.List;
 import com.google.zetasql.SimpleColumn;
 import com.google.zetasql.SimpleTable;
 import com.google.zetasql.TypeFactory;
-import com.google.zetasql.StructType.StructField;
 import com.google.zetasql.ZetaSQLType.TypeKind;
 import com.google.zetasql.toolkit.catalog.FunctionInfo;
 import com.google.zetasql.toolkit.catalog.ProcedureInfo;
