@@ -63,7 +63,7 @@ create or replace temporary table apex_agg as (
                   string_agg(distinct csp_visitor,';') apex_visitor,
                   string_agg(distinct csp_all_users,';') apex_all_users,
                   string_agg(distinct csp_is_Partner,';') apex_is_Partner, 
-                  from `default.samples.wikipedia` 
+                  from csp_data
                   group by 1
             )
   )            """;
