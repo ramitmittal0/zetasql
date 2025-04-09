@@ -17,7 +17,7 @@ public class MyResourceProvider implements BigQueryResourceProvider {
     public List<SimpleTable> getTables(String projectId, List<String> tableReferences) {
         var tableName = "wikipedia";
         List<SimpleColumn> columns = List.of(
-            new SimpleColumn(tableName, "apex_is_Partner", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
+            new SimpleColumn(tableName, "csp_visitor", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
             new SimpleColumn(tableName, "csp_all_users", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
             new SimpleColumn(tableName, "csp_is_Partner", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
             new SimpleColumn(tableName, "apexid", TypeFactory.createSimpleType(TypeKind.TYPE_STRING))
