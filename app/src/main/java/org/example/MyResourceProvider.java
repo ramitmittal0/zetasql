@@ -14,6 +14,8 @@ import com.google.zetasql.toolkit.catalog.bigquery.BigQueryResourceProvider;
 public class MyResourceProvider implements BigQueryResourceProvider {
     @Override
     public List<SimpleTable> getTables(String projectId, List<String> tableReferences) {
+        System.out.println("Called here 222");
+
         var tableName = "wikipedia";
         List<SimpleColumn> columns = List.of(
             new SimpleColumn(tableName, "title", TypeFactory.createSimpleType(ZetaSQLType.TypeKind.TYPE_STRING)),

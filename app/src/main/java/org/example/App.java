@@ -16,30 +16,17 @@
 
 package org.example;
 
-import org.example.MyResourceProvider;
-import com.google.common.collect.ImmutableList;
 import com.google.zetasql.AnalyzerOptions;
-import com.google.zetasql.SimpleCatalog;
-import com.google.zetasql.SimpleColumn;
-import com.google.zetasql.SimpleTable;
-import com.google.zetasql.TypeFactory;
-import com.google.zetasql.ZetaSQLType;
 import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedCreateTableAsSelectStmt;
-import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedInsertStmt;
-import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedMergeStmt;
 import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedStatement;
-import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedUpdateStmt;
 import com.google.zetasql.toolkit.AnalyzedStatement;
 import com.google.zetasql.toolkit.ZetaSQLToolkitAnalyzer;
 import com.google.zetasql.toolkit.catalog.bigquery.BigQueryCatalog;
-import com.google.zetasql.toolkit.catalog.bigquery.BigQueryResourceProvider;
-import com.google.zetasql.toolkit.catalog.io.CatalogResources;
 import com.google.zetasql.toolkit.options.BigQueryLanguageOptions;
 import com.google.zetasql.toolkit.tools.lineage.ColumnEntity;
 import com.google.zetasql.toolkit.tools.lineage.ColumnLineage;
 import com.google.zetasql.toolkit.tools.lineage.ColumnLineageExtractor;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 public class App {
@@ -156,6 +143,7 @@ public class App {
 
   public static void main(String[] args) {
     BigQueryCatalog catalog = new BigQueryCatalog("default", new MyResourceProvider());
+    catalog.addAllTablesInProject("default");
     AnalyzerOptions options = new AnalyzerOptions();
     options.setLanguageOptions(BigQueryLanguageOptions.get());
 
