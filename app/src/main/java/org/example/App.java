@@ -19,6 +19,7 @@ package org.example;
 import com.google.zetasql.Analyzer;
 import com.google.zetasql.AnalyzerOptions;
 import com.google.zetasql.LanguageOptions;
+import com.google.zetasql.Parser;
 import com.google.zetasql.ZetaSQLOptions;
 import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedCreateTableAsSelectStmt;
 import com.google.zetasql.resolvedast.ResolvedNodes.ResolvedStatement;
@@ -72,22 +73,27 @@ create or replace temporary table apex_agg as (
             )
   )            """;
 
+  LanguageOptions languageOptions = new LanguageOptions().enableMaximumLanguageFeatures();
+  languageOptions.setSupportsAllStatementKinds();
+
+    var x = Parser.parseScript(query, languageOptions);
+    var sb = new StringBuilder();
+    x.debugStringImpl("    ", " ", sb);
+    System.out.println(sb.toString());
+
   // Set<String> tables =
   // Analyzer.extractTableNamesFromScript(query, options).stream()
   //     .map(tablePath -> String.join(".", tablePath))
   //     .collect(Collectors.toSet());
   // System.out.println(tables);
 
-    ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
-    Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query);
-    ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
+    // ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
+    // Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query);
+    // ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
 
-    var sb = new StringBuilder();
-    statement.debugStringImpl("    ", " ", sb);
-    System.out.println(sb.toString());
 
-    ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
-        (ResolvedCreateTableAsSelectStmt) statement;
+    // ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
+    //     (ResolvedCreateTableAsSelectStmt) statement;
 
 
     // Set<ColumnLineage> lineageEntries =
@@ -172,6 +178,8 @@ create or replace temporary table apex_agg as (
 
     LanguageOptions languageOptions = new LanguageOptions().enableMaximumLanguageFeatures();
     languageOptions.setSupportsAllStatementKinds();
+    
+
     AnalyzerOptions options = new AnalyzerOptions();
     options.setLanguageOptions(languageOptions);
 
