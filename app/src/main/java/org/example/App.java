@@ -49,16 +49,10 @@ public class App {
   private static void lineageForCreateTableAsSelectStatement(
       BigQueryCatalog catalog, ZetaSQLToolkitAnalyzer analyzer) {
     String query =
-        "CREATE TEMP TABLE t AS\n"
-            + "SELECT\n"
-            + "    concatted AS column_alias\n"
-            + "FROM\n"
-            + "    (\n"
-            + "        SELECT \n"
-            + "            UPPER(CONCAT(title, comment)) AS concatted\n"
-            + "        FROM `default`.samples.wikipedia\n"
-            + "    )\n"
-            + "GROUP BY 1;";
+        """
+            CREATE TEMP TABLE t AS
+            SELECT rec FROM `default`.samples.wikipedia;
+            """;
 
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
     ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
