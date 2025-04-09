@@ -72,7 +72,6 @@ create or replace temporary table apex_agg as (
             )
   )            """;
 
-
   // Set<String> tables =
   // Analyzer.extractTableNamesFromScript(query, options).stream()
   //     .map(tablePath -> String.join(".", tablePath))
@@ -82,14 +81,19 @@ create or replace temporary table apex_agg as (
     ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
     Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
     ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
+
     ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
         (ResolvedCreateTableAsSelectStmt) statement;
 
-    Set<ColumnLineage> lineageEntries =
-        ColumnLineageExtractor.extractColumnLevelLineage(createTableAsSelectStmt);
+        var sb = new StringBuilder();
+        createTableAsSelectStmt.debugStringImpl("    ", " ", sb);
+        System.out.println(sb.toString());
 
-    System.out.println("Extracted column lineage from CREATE TABLE AS SELECT");
-    outputLineage(query, lineageEntries);
+    // Set<ColumnLineage> lineageEntries =
+    //     ColumnLineageExtractor.extractColumnLevelLineage(createTableAsSelectStmt);
+
+    // System.out.println("Extracted column lineage from CREATE TABLE AS SELECT");
+    // outputLineage(query, lineageEntries);
   }
 
   // private static void lineageForInsertStatement(
