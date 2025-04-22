@@ -56,7 +56,7 @@ public class App {
     String query =
         """
 create or replace temp table all_latest_ratings as (
-select * from `default`.samples.stg_data
+select * from default.samples.stg_data
 pivot(string_agg(prev_rating_value) as latest_rating, string_agg(prev_rating_name) as latest_perf_cycle for 
    cast(prev_rating_rank as string)  in ('0','1','2')))
         """;
@@ -79,7 +79,7 @@ pivot(string_agg(prev_rating_value) as latest_rating, string_agg(prev_rating_nam
   // System.out.println(tables);
 
     ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
-    Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query);
+    Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query, catalog);
     ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
 
 
