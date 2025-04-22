@@ -56,7 +56,7 @@ public class App {
     String query =
         """
 create or replace temp table all_latest_ratings as (
-select * from `default.samples.stg_data`
+select * from `default`.samples.stg_data
 pivot(string_agg(prev_rating_value) as latest_rating, string_agg(prev_rating_name) as latest_perf_cycle for 
    cast(prev_rating_rank as string)  in ('0','1','2')))
         """;
@@ -169,7 +169,6 @@ pivot(string_agg(prev_rating_value) as latest_rating, string_agg(prev_rating_nam
 
     LanguageOptions languageOptions = new LanguageOptions().enableMaximumLanguageFeatures();
     languageOptions.setSupportsAllStatementKinds();
-    
 
     AnalyzerOptions options = new AnalyzerOptions();
     options.setLanguageOptions(languageOptions);
