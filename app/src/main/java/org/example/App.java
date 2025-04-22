@@ -55,31 +55,22 @@ public class App {
       BigQueryCatalog catalog, AnalyzerOptions options) {
     String query =
         """
-create or replace temporary table apex_agg as (
-        select * except(apex_is_Partner),
-            case 
-                  when (apex_is_Partner like '%Mixed%' or apex_is_Partner like '%Partner%PANW%' or apex_is_Partner like '%PANW%Partner%') then 'Mixed' 
-                  when apex_is_Partner = 'Partner' then 'Partner'
-                  else 'PANW'
-                end as apex_is_Partner
-            from (
-                  select 
-                  apexid,
-                  string_agg(distinct csp_visitor,';') apex_visitor,
-                  string_agg(distinct csp_all_users,';') apex_all_users,
-                  string_agg(distinct csp_is_Partner,';') apex_is_Partner, 
-                  from csp_data
-                  group by 1
-            )
-  )            """;
+create or replace temp table all_latest_ratings as (
+select * from default.samples.stg_data
+pivot(string_agg(prev_rating_value) as latest_rating, string_agg(prev_rating_name) as latest_perf_cycle for 
+   cast(prev_rating_rank as string)  in ('0','1','2')))
+        """;
 
-  LanguageOptions languageOptions = new LanguageOptions().enableMaximumLanguageFeatures();
-  languageOptions.setSupportsAllStatementKinds();
+  // LanguageOptions languageOptions = new LanguageOptions().enableMaximumLanguageFeatures();
+  // languageOptions.setSupportsAllStatementKinds();
 
-    var x = Parser.parseScript(query, languageOptions);
-    var sb = new StringBuilder();
-    x.debugStringImpl("    ", " ", sb);
-    System.out.println(sb.toString());
+  //   var x = Parser.parseScript(query, languageOptions);
+  //   var sb = new StringBuilder();
+  //   x.debugStringImpl("    ", " ", sb);
+  //   System.out.println(sb.toString());
+    
+  //   x.accept(MyVisitor);
+
 
   // Set<String> tables =
   // Analyzer.extractTableNamesFromScript(query, options).stream()
@@ -87,20 +78,20 @@ create or replace temporary table apex_agg as (
   //     .collect(Collectors.toSet());
   // System.out.println(tables);
 
-    // ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
-    // Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query);
-    // ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
+    ZetaSQLToolkitAnalyzer analyzer = new ZetaSQLToolkitAnalyzer(options);
+    Iterator<AnalyzedStatement> statementIterator = analyzer.analyzeStatements(query);
+    ResolvedStatement statement = statementIterator.next().getResolvedStatement().get();
 
 
-    // ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
-    //     (ResolvedCreateTableAsSelectStmt) statement;
+    ResolvedCreateTableAsSelectStmt createTableAsSelectStmt =
+        (ResolvedCreateTableAsSelectStmt) statement;
 
 
-    // Set<ColumnLineage> lineageEntries =
-    //     ColumnLineageExtractor.extractColumnLevelLineage(createTableAsSelectStmt);
+    Set<ColumnLineage> lineageEntries =
+        ColumnLineageExtractor.extractColumnLevelLineage(createTableAsSelectStmt);
 
-    // System.out.println("Extracted column lineage from CREATE TABLE AS SELECT");
-    // outputLineage(query, lineageEntries);
+    System.out.println("Extracted column lineage from CREATE TABLE AS SELECT");
+    outputLineage(query, lineageEntries);
   }
 
   // private static void lineageForInsertStatement(

@@ -14,16 +14,15 @@ import com.google.zetasql.toolkit.catalog.bigquery.BigQueryResourceProvider;
 public class MyResourceProvider implements BigQueryResourceProvider {
     @Override
     public List<SimpleTable> getTables(String projectId, List<String> tableReferences) {
-        var tableName = "csp_data";
+        var tableName = "stg_data";
         List<SimpleColumn> columns = List.of(
-            new SimpleColumn(tableName, "csp_visitor", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
-            new SimpleColumn(tableName, "csp_all_users", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
-            new SimpleColumn(tableName, "csp_is_Partner", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
-            new SimpleColumn(tableName, "apexid", TypeFactory.createSimpleType(TypeKind.TYPE_STRING))
+            new SimpleColumn(tableName, "prev_rating_value", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
+            new SimpleColumn(tableName, "prev_rating_name", TypeFactory.createSimpleType(TypeKind.TYPE_STRING)),
+            new SimpleColumn(tableName, "prev_rating_rank", TypeFactory.createSimpleType(TypeKind.TYPE_STRING))
 
         );
         SimpleTable table = new SimpleTable(tableName, columns);
-        table.setFullName("default.samples.csp_data");
+        table.setFullName("default.samples.stg_data");
         return List.of(table);
     }
 
